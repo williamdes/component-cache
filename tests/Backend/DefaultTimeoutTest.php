@@ -30,7 +30,7 @@ class DefaultTimeoutTest extends TestCase
 
     private $defaultTTl = 555;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->backendMock = $this->getMockBuilder(NullCache::class)->getMock();
 
@@ -39,7 +39,7 @@ class DefaultTimeoutTest extends TestCase
         $this->cache = new DefaultTimeoutDecorated($this->backendMock, $opts);
     }
 
-    public function test_doSave_shouldCallDecoratedWithDefaultTTL()
+    public function doSave_shouldCallDecoratedWithDefaultTTLTest()
     {
         $this->backendMock
             ->expects($this->once())

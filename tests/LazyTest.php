@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @covers \Matomo\Cache\Lazy
  */
+ #[\PHPUnit\Framework\Attributes\CoversClass(Lazy::class)]
 class LazyTest extends TestCase
 {
     /**
@@ -25,7 +26,7 @@ class LazyTest extends TestCase
     private $cacheId = 'testid';
     private $cacheValue = 'exampleValue';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $backend = new ArrayCache();
         $this->cache = new Lazy($backend);
@@ -36,24 +37,26 @@ class LazyTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Empty cache id
      */
-    public function test_fetch_shouldFail_IfCacheIdIsEmpty()
+    public function fetch_shouldFail_IfCacheIdIsEmptyTest()
     {
         $this->cache->fetch('');
     }
 
     /**
      * @dataProvider getInvalidCacheIds
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid cache id
      */
+     #[\PHPUnit\Framework\Attributes\DataProvider('getInvalidCacheIds')]
     public function test_shouldFail_IfCacheIdIsInvalid($method, $id)
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid cache id');
         $this->executeMethodOnCache($method, $id);
     }
 
     /**
      * @dataProvider getValidCacheIds
      */
+     #[\PHPUnit\Framework\Attributes\DataProvider('getValidCacheIds')]
     public function test_shouldNotFail_IfCacheIdIsValid($method, $id)
     {
         $this->executeMethodOnCache($method, $id);
@@ -69,32 +72,32 @@ class LazyTest extends TestCase
         }
     }
 
-    public function test_fetch_shouldReturnFalse_IfNoSuchCacheIdExists()
+    public function fetch_shouldReturnFalse_IfNoSuchCacheIdExistsTest()
     {
         $this->assertFalse($this->cache->fetch('randomid'));
     }
 
-    public function test_fetch_shouldReturnTheCachedValue_IfCacheIdExists()
+    public function fetch_shouldReturnTheCachedValue_IfCacheIdExistsTest()
     {
         $this->assertEquals($this->cacheValue, $this->cache->fetch($this->cacheId));
     }
 
-    public function test_contains_shouldReturnFalse_IfNoSuchCacheIdExists()
+    public function contains_shouldReturnFalse_IfNoSuchCacheIdExistsTest()
     {
         $this->assertFalse($this->cache->contains('randomid'));
     }
 
-    public function test_contains_shouldReturnTrue_IfCacheIdExists()
+    public function contains_shouldReturnTrue_IfCacheIdExistsTest()
     {
         $this->assertTrue($this->cache->contains($this->cacheId));
     }
 
-    public function test_delete_shouldReturnTrue_OnSuccess()
+    public function delete_shouldReturnTrue_OnSuccessTest()
     {
         $this->assertTrue($this->cache->delete($this->cacheId));
     }
 
-    public function test_delete_shouldActuallyDeleteCacheId()
+    public function delete_shouldActuallyDeleteCacheIdTest()
     {
         $this->assertHasCacheEntry($this->cacheId);
 
@@ -103,7 +106,7 @@ class LazyTest extends TestCase
         $this->assertHasNotCacheEntry($this->cacheId);
     }
 
-    public function test_delete_shouldNotDeleteAnyOtherCacheIds()
+    public function delete_shouldNotDeleteAnyOtherCacheIdsTest()
     {
         $this->cache->save('anyother', 'myvalue');
         $this->assertHasCacheEntry($this->cacheId);
@@ -113,7 +116,7 @@ class LazyTest extends TestCase
         $this->assertHasCacheEntry('anyother');
     }
 
-    public function test_save_shouldOverwriteAnyValue_IfCacheIdAlreadyExists()
+    public function save_shouldOverwriteAnyValue_IfCacheIdAlreadyExistsTest()
     {
         $this->assertHasCacheEntry($this->cacheId);
 
@@ -123,7 +126,7 @@ class LazyTest extends TestCase
         $this->assertSame($value, $this->cache->fetch($this->cacheId));
     }
 
-    public function test_save_shouldBeAbleToSetArrays()
+    public function save_shouldBeAbleToSetArraysTest()
     {
         $value = array('anyotherE' => 'anyOtherValUE', 1 => array(2));
         $this->cache->save($this->cacheId, $value);
@@ -135,7 +138,7 @@ class LazyTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage cannot use this cache to cache an object
      */
-    public function test_save_shouldFail_IfTryingToSetAnObject()
+    public function save_shouldFail_IfTryingToSetAnObjectTest()
     {
         $value = (object) array('anyotherE' => 'anyOtherValUE', 1 => array(2));
         $this->cache->save($this->cacheId, $value);
@@ -143,7 +146,7 @@ class LazyTest extends TestCase
         $this->assertSame($value, $this->cache->fetch($this->cacheId));
     }
 
-    public function test_save_shouldBeAbleToSetNumbers()
+    public function save_shouldBeAbleToSetNumbersTest()
     {
         $value = 5.4;
         $this->cache->save($this->cacheId, $value);
@@ -151,7 +154,7 @@ class LazyTest extends TestCase
         $this->assertSame($value, $this->cache->fetch($this->cacheId));
     }
 
-    public function test_flush_shouldRemoveAllCacheIds()
+    public function flush_shouldRemoveAllCacheIdsTest()
     {
         $this->assertHasCacheEntry($this->cacheId);
         $this->cache->save('mykey', 'myvalue');
@@ -173,7 +176,7 @@ class LazyTest extends TestCase
         $this->assertFalse($this->cache->contains($cacheId));
     }
 
-    public function getInvalidCacheIds()
+    public static function getInvalidCacheIds()
     {
         $ids = array();
         $methods = array('fetch', 'save', 'contains', 'delete');
@@ -192,7 +195,7 @@ class LazyTest extends TestCase
         return $ids;
     }
 
-    public function getValidCacheIds()
+    public static function getValidCacheIds()
     {
         $ids = array();
         $methods = array('fetch', 'save', 'contains', 'delete');
