@@ -40,22 +40,22 @@ class EagerTest extends TestCase
         $this->cache = new Eager($this->backend, $this->storageId);
     }
 
-    public function contains_shouldReturnFalse_IfNoSuchCacheIdExistsTest()
+    public function test_contains_shouldReturnFalse_IfNoSuchCacheIdExists()
     {
         $this->assertFalse($this->cache->contains('randomid'));
     }
 
-    public function contains_shouldReturnTrue_IfSuchCacheIdExistsTest()
+    public function test_contains_shouldReturnTrue_IfSuchCacheIdExists()
     {
         $this->assertTrue($this->cache->contains($this->cacheId));
     }
 
-    public function fetch_shouldReturnTheCachedValue_IfCacheIdExistsTest()
+    public function test_fetch_shouldReturnTheCachedValue_IfCacheIdExists()
     {
         $this->assertEquals($this->cacheValue, $this->cache->fetch($this->cacheId));
     }
 
-    public function save_shouldOverwriteAnyValue_IfCacheIdAlreadyExistsTest()
+    public function test_save_shouldOverwriteAnyValue_IfCacheIdAlreadyExists()
     {
         $this->assertHasCacheEntry($this->cacheId);
 
@@ -65,7 +65,7 @@ class EagerTest extends TestCase
         $this->assertSame($value, $this->cache->fetch($this->cacheId));
     }
 
-    public function save_shouldBeAbleToSetArraysTest()
+    public function test_save_shouldBeAbleToSetArrays()
     {
         $value = array('anyotherE' => 'anyOtherValUE', 1 => array(2));
         $this->cache->save($this->cacheId, $value);
@@ -77,7 +77,7 @@ class EagerTest extends TestCase
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage cannot use this cache to cache an object
      */
-    public function save_shouldFail_IfTryingToSetAnObjectTest()
+    public function test_save_shouldFail_IfTryingToSetAnObject()
     {
         $value = (object) array('anyotherE' => 'anyOtherValUE', 1 => array(2));
         $this->cache->save($this->cacheId, $value);
@@ -85,7 +85,7 @@ class EagerTest extends TestCase
         $this->assertSame($value, $this->cache->fetch($this->cacheId));
     }
 
-    public function save_shouldBeAbleToSetNumbersTest()
+    public function test_save_shouldBeAbleToSetNumbers()
     {
         $value = 5.4;
         $this->cache->save($this->cacheId, $value);
@@ -93,17 +93,17 @@ class EagerTest extends TestCase
         $this->assertSame($value, $this->cache->fetch($this->cacheId));
     }
 
-    public function delete_shouldReturnTrue_OnSuccessTest()
+    public function test_delete_shouldReturnTrue_OnSuccess()
     {
         $this->assertTrue($this->cache->delete($this->cacheId));
     }
 
-    public function delete_shouldReturnFalse_IfCacheIdDoesNotExistTest()
+    public function test_delete_shouldReturnFalse_IfCacheIdDoesNotExist()
     {
         $this->assertFalse($this->cache->delete('IdoNotExisT'));
     }
 
-    public function delete_shouldActuallyDeleteCacheIdTest()
+    public function test_delete_shouldActuallyDeleteCacheId()
     {
         $this->assertHasCacheEntry($this->cacheId);
 
@@ -112,7 +112,7 @@ class EagerTest extends TestCase
         $this->assertHasNotCacheEntry($this->cacheId);
     }
 
-    public function delete_shouldNotDeleteAnyOtherCacheIdsTest()
+    public function test_delete_shouldNotDeleteAnyOtherCacheIds()
     {
         $this->cache->save('anyother', 'myvalue');
         $this->assertHasCacheEntry($this->cacheId);
@@ -122,7 +122,7 @@ class EagerTest extends TestCase
         $this->assertHasCacheEntry('anyother');
     }
 
-    public function flush_shouldRemoveAllCacheIdsTest()
+    public function test_flush_shouldRemoveAllCacheIds()
     {
         $this->assertHasCacheEntry($this->cacheId);
         $this->cache->save('mykey', 'myvalue');
@@ -136,7 +136,7 @@ class EagerTest extends TestCase
         $this->assertFalse($this->backend->doContains($this->storageId)); // should also remove the storage entry
     }
 
-    public function persistCacheIfNeeded_shouldActuallySaveValuesInBackend_IfThereWasSomethingSetTest()
+    public function test_persistCacheIfNeeded_shouldActuallySaveValuesInBackend_IfThereWasSomethingSet()
     {
         $this->cache->save('mykey', 'myvalue');
 
@@ -150,7 +150,7 @@ class EagerTest extends TestCase
         $this->assertEquals($expected, $this->getContentOfStorage());
     }
 
-    public function persistCacheIfNeeded_shouldActuallySaveValuesInBackend_IfThereWasSomethingDeleteTest()
+    public function test_persistCacheIfNeeded_shouldActuallySaveValuesInBackend_IfThereWasSomethingDelete()
     {
         $this->cache->delete($this->cacheId);
 
@@ -162,7 +162,7 @@ class EagerTest extends TestCase
         $this->assertEquals(array(), $this->getContentOfStorage());
     }
 
-    public function persistCacheIfNeeded_shouldNotSaveAnyValuesInBackend_IfThereWasNoChangeTest()
+    public function test_persistCacheIfNeeded_shouldNotSaveAnyValuesInBackend_IfThereWasNoChange()
     {
         $this->backend->doDelete($this->storageId);
         $this->assertFalse($this->getContentOfStorage());
