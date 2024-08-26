@@ -33,12 +33,11 @@ class LazyTest extends TestCase
         $this->cache->save($this->cacheId, $this->cacheValue);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Empty cache id
-     */
     public function test_fetch_shouldFail_IfCacheIdIsEmpty()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Empty cache id');
+
         $this->cache->fetch('');
     }
 
@@ -134,12 +133,11 @@ class LazyTest extends TestCase
         $this->assertSame($value, $this->cache->fetch($this->cacheId));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage cannot use this cache to cache an object
-     */
     public function test_save_shouldFail_IfTryingToSetAnObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('cannot use this cache to cache an object');
+
         $value = (object) array('anyotherE' => 'anyOtherValUE', 1 => array(2));
         $this->cache->save($this->cacheId, $value);
 

@@ -109,21 +109,19 @@ class FactoryTest extends TestCase
         $this->assertEquals(5, $redis->getDBNum());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage RedisCache is not configured
-     */
     public function test_buildRedisCache_ShouldFail_IfPortIsMissing()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('RedisCache is not configured');
+
         $this->factory->buildRedisCache(array('host' => '127.0.0.1'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage RedisCache is not configured
-     */
     public function test_buildRedisCache_ShouldFail_IfHostIsMissing()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('RedisCache is not configured');
+
         $this->factory->buildRedisCache(array('port' => '6379'));
     }
 
@@ -151,11 +149,10 @@ class FactoryTest extends TestCase
         $this->assertInstanceOf(Chained::class, $cache);
     }
 
-    /**
-     * @expectedException \Matomo\Cache\Backend\Factory\BackendNotFoundException
-     */
     public function test_buildBackend_ShouldThrowException_IfInvalidTypeGiven()
     {
+        $this->expectException(\Matomo\Cache\Backend\Factory\BackendNotFoundException::class);
+
         $this->factory->buildBackend('noTValId', array());
     }
 
